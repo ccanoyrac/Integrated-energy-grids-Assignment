@@ -1,0 +1,28 @@
+id;name;geoid;geoname;value;start_date;end_date
+1478;Installed capacity generation coal;;;241.2;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1478;Installed capacity generation coal;;;570.05;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1478;Installed capacity generation coal;;;1249.925;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1483;Installed capacity generation combined cycle GT;;;26250.145;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1489;Installed capacity generation cogeneration;;;5622.455;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1485;Installed capacity generation wind;;;31020.198;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1482;Installed capacity generation fuel;;;7.95;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1475;Installed capacity generation hydro;;;17096.959;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1484;Installed capacity generation hidroeolica;;;11.32;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1479;Installed capacity generation diesel engines;;;64.11;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1479;Installed capacity generation diesel engines;;;77.52;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1479;Installed capacity generation diesel engines;;;139.4;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1479;Installed capacity generation diesel engines;;;487.64;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1477;Installed capacity generation nuclear;;;1003.41;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1477;Installed capacity generation nuclear;;;1063.94;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1477;Installed capacity generation nuclear;;;2017.13;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1477;Installed capacity generation nuclear;;;3032.81;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1488;Installed capacity generation other renewables;;;1114.787;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1490;Installed capacity generation non renewables Waste;;;425.766;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1491;Installed capacity generation renewables Waste;;;170.115;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1486;Installed capacity generation solar PV;;;31644.258;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1487;Installed capacity generation solar thermal;;;2302.861;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1480;Installed capacity generation gas turbine;;;11.5;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1480;Installed capacity generation gas turbine;;;13.3;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1480;Installed capacity generation gas turbine;;;520.75;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1480;Installed capacity generation gas turbine;;;603.1;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
+1481;Installed capacity generation steam turbine;;;482.64;2024-03-01T00:00:00+01:00;2024-03-31T23:55:00+02:00
