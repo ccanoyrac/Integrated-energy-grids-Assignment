@@ -1,0 +1,14 @@
+Technology,Category,Overnight Cost,Unit,FOM (%/a),Lifetime (a),Efficiency,Fuel Cost (€/MWh)
+Wind onshore,wind,1182,kWel,3,25,1,0.02
+Wind offshore,wind,2506,kWel,3,25,1,0.02
+Solar PV rooftop,solar,725,kWel,2,25,1,0.01
+Solar PV utility,solar,425,kWel,3,25,1,0.01
+Pumped hydro storage,hydro,2000,kWel,1,80,0.87,0.03
+Hydro reservoir,hydro,2000,kWel,1,80,0.9,0.03
+Run-of-river,hydro,3000,kWel,2,80,0.9,0.03
+Combined heat and power (CHP) central,chp,600,kWth,3,25,0.8,93.78
+Open cycle gas turbine (OCGT),fossil,400,kWel,4,30,0.39,30.00
+Coal,coal,3000,kWel,3,40,0.40,61.52
+Nuclear,nuclear,6000,kWel,2.5,60,0.33,8.50
+Battery system,storage,450,kWel,2,15,0.90,0.00
+Hydrogen system,storage,2800,kWel,3,25,0.35,0.00

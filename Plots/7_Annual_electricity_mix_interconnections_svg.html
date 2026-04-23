@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_4df1d95f0ee5e3e089e07f0b2e698404 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+<div style="position: fixed; 
+            top: 10px; left: 50px; width: 400px; z-index:9999; 
+            background-color: white; border:2px solid #333; border-radius:5px;
+            padding: 10px; font-family: Arial; box-shadow: 0 0 10px rgba(0,0,0,0.3);">
+    <h3 style="margin: 0; color: #333;">Multi-Country Generation Mix (SVG)</h3>
+    <p style="margin: 5px 0; font-size: 12px; color: #666;">
+        Hover over markers for details | Click for pie chart breakdown
+    </p>
+</div>
+    
+            <div class="folium-map" id="map_4df1d95f0ee5e3e089e07f0b2e698404" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_4df1d95f0ee5e3e089e07f0b2e698404 = L.map(
+                "map_4df1d95f0ee5e3e089e07f0b2e698404",
+                {
+                    center: [43.0, 5.0],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 4.5,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_21fb2449c70825e0337b84555d872ee8 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_21fb2449c70825e0337b84555d872ee8.addTo(map_4df1d95f0ee5e3e089e07f0b2e698404);
+        
+    
+            var circle_marker_457ee7f0b7624f29891a714373671676 = L.circleMarker(
+                [40.0, -2.7],
+                {"bubblingMouseEvents": true, "color": "#FF6B6B", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF6B6B", "fillOpacity": 0.85, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.9, "radius": 35, "stroke": true, "weight": 2}
+            ).addTo(map_4df1d95f0ee5e3e089e07f0b2e698404);
+        
+    
+        var popup_31c24bf5f404a9ecbc1a38507cf499b4 = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_c62d72f52492d9617c667451568fdda7 = $(`<div id="html_c62d72f52492d9617c667451568fdda7" style="width: 100.0%; height: 100.0%;">         <div style="text-align: center; font-family: Arial; width: 150px;">             <h4 style="margin: 5px 0;">Spain</h4>             <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">     <circle cx="60.0" cy="60.0" r="58.0" fill="white" stroke="#ddd" stroke-width="1"/>     <path d="M 60.0 60.0 L 60.0 2.0 A 58.0 58.0 0 0 1 101.78495902175138 100.22458451681706 Z" fill="darkgreen" stroke="white" stroke-width="0.5" title="Wind: 94329.9 GWh (37.2%)"/>     <path d="M 60.0 60.0 L 101.78495902175138 100.22458451681706 A 58.0 58.0 0 0 1 13.012841250726325 94.00304269724336 Z" fill="orange" stroke="white" stroke-width="0.5" title="Solar: 70582.2 GWh (27.8%)"/>     <path d="M 60.0 60.0 L 13.012841250726325 94.00304269724336 A 58.0 58.0 0 0 1 14.95384040983977 23.464489791740746 Z" fill="darkorange" stroke="white" stroke-width="0.5" title="CCGT: 52787.3 GWh (20.8%)"/>     <path d="M 60.0 60.0 L 14.95384040983977 23.464489791740746 A 58.0 58.0 0 0 1 59.99999999999999 2.0 Z" fill="royalblue" stroke="white" stroke-width="0.5" title="Hydro: 35894.5 GWh (14.2%)"/> </svg>             <p style="font-size: 11px; margin: 5px 0;">                 <b>253.59 TWh</b>             </p>             <table style="font-size: 9px; width: 100%; margin: 5px 0;">         <tr><td style="text-align:left; color:darkgreen; font-weight:bold;">■ Wind</td><td style="text-align:right;">37%</td></tr><tr><td style="text-align:left; color:orange; font-weight:bold;">■ Solar</td><td style="text-align:right;">28%</td></tr><tr><td style="text-align:left; color:darkorange; font-weight:bold;">■ CCGT</td><td style="text-align:right;">21%</td></tr><tr><td style="text-align:left; color:royalblue; font-weight:bold;">■ Hydro</td><td style="text-align:right;">14%</td></tr><tr><td style="text-align:left; color:darkgray; font-weight:bold;">■ Coal</td><td style="text-align:right;">0%</td></tr><tr><td style="text-align:left; color:purple; font-weight:bold;">■ Nuclear</td><td style="text-align:right;">0%</td></tr></table></div></div>`)[0];
+                popup_31c24bf5f404a9ecbc1a38507cf499b4.setContent(html_c62d72f52492d9617c667451568fdda7);
+            
+        
+
+        circle_marker_457ee7f0b7624f29891a714373671676.bindPopup(popup_31c24bf5f404a9ecbc1a38507cf499b4)
+        ;
+
+        
+    
+    
+            var circle_marker_7e9a56b101a1e69b8b8b0fcfddbf81cf = L.circleMarker(
+                [46.2, 3.2],
+                {"bubblingMouseEvents": true, "color": "#4ECDC4", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#4ECDC4", "fillOpacity": 0.85, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.9, "radius": 35, "stroke": true, "weight": 2}
+            ).addTo(map_4df1d95f0ee5e3e089e07f0b2e698404);
+        
+    
+        var popup_9078744ff5f328960cee55d7b757db49 = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_765a835030e45517b50c876c00677172 = $(`<div id="html_765a835030e45517b50c876c00677172" style="width: 100.0%; height: 100.0%;">         <div style="text-align: center; font-family: Arial; width: 150px;">             <h4 style="margin: 5px 0;">France</h4>             <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">     <circle cx="60.0" cy="60.0" r="58.0" fill="white" stroke="#ddd" stroke-width="1"/>     <path d="M 60.0 60.0 L 60.0 2.0 A 58.0 58.0 0 0 1 67.98228856351088 117.44809021446095 Z" fill="purple" stroke="white" stroke-width="0.5" title="Nuclear: 230406.1 GWh (47.8%)"/>     <path d="M 60.0 60.0 L 67.98228856351088 117.44809021446095 A 58.0 58.0 0 0 1 8.787975514597093 87.22734926698692 Z" fill="darkgreen" stroke="white" stroke-width="0.5" title="Wind: 93604.3 GWh (19.4%)"/>     <path d="M 60.0 60.0 L 8.787975514597093 87.22734926698692 A 58.0 58.0 0 0 1 5.5770645980789055 39.94646908301874 Z" fill="royalblue" stroke="white" stroke-width="0.5" title="Hydro: 64567.7 GWh (13.4%)"/>     <path d="M 60.0 60.0 L 5.5770645980789055 39.94646908301874 A 58.0 58.0 0 0 1 34.36906841564711 7.970629966160253 Z" fill="orange" stroke="white" stroke-width="0.5" title="Solar: 58303.1 GWh (12.1%)"/>     <path d="M 60.0 60.0 L 34.36906841564711 7.970629966160253 A 58.0 58.0 0 0 1 59.99999999999999 2.0 Z" fill="darkorange" stroke="white" stroke-width="0.5" title="CCGT: 35113.3 GWh (7.3%)"/> </svg>             <p style="font-size: 11px; margin: 5px 0;">                 <b>481.99 TWh</b>             </p>             <table style="font-size: 9px; width: 100%; margin: 5px 0;">         <tr><td style="text-align:left; color:purple; font-weight:bold;">■ Nuclear</td><td style="text-align:right;">48%</td></tr><tr><td style="text-align:left; color:darkgreen; font-weight:bold;">■ Wind</td><td style="text-align:right;">19%</td></tr><tr><td style="text-align:left; color:royalblue; font-weight:bold;">■ Hydro</td><td style="text-align:right;">13%</td></tr><tr><td style="text-align:left; color:orange; font-weight:bold;">■ Solar</td><td style="text-align:right;">12%</td></tr><tr><td style="text-align:left; color:darkorange; font-weight:bold;">■ CCGT</td><td style="text-align:right;">7%</td></tr><tr><td style="text-align:left; color:darkgray; font-weight:bold;">■ Coal</td><td style="text-align:right;">0%</td></tr></table></div></div>`)[0];
+                popup_9078744ff5f328960cee55d7b757db49.setContent(html_765a835030e45517b50c876c00677172);
+            
+        
+
+        circle_marker_7e9a56b101a1e69b8b8b0fcfddbf81cf.bindPopup(popup_9078744ff5f328960cee55d7b757db49)
+        ;
+
+        
+    
+    
+            var circle_marker_7ecaeed885c39350d347cd9bc6166f09 = L.circleMarker(
+                [41.9, 13.6],
+                {"bubblingMouseEvents": true, "color": "#45B7D1", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#45B7D1", "fillOpacity": 0.85, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.9, "radius": 35, "stroke": true, "weight": 2}
+            ).addTo(map_4df1d95f0ee5e3e089e07f0b2e698404);
+        
+    
+        var popup_80462ce5696c2c40c90e4c5d0b82878f = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_faeee218903066668f3fdf4fe44c41e9 = $(`<div id="html_faeee218903066668f3fdf4fe44c41e9" style="width: 100.0%; height: 100.0%;">         <div style="text-align: center; font-family: Arial; width: 150px;">             <h4 style="margin: 5px 0;">Italy</h4>             <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">     <circle cx="60.0" cy="60.0" r="58.0" fill="white" stroke="#ddd" stroke-width="1"/>     <path d="M 60.0 60.0 L 60.0 2.0 A 58.0 58.0 0 0 1 104.35432009782022 97.37237333459171 Z" fill="purple" stroke="white" stroke-width="0.5" title="Nuclear: 70484.6 GWh (36.1%)"/>     <path d="M 60.0 60.0 L 104.35432009782022 97.37237333459171 A 58.0 58.0 0 0 1 26.057353421832133 107.03080632170354 Z" fill="darkgreen" stroke="white" stroke-width="0.5" title="Wind: 46424.5 GWh (23.8%)"/>     <path d="M 60.0 60.0 L 26.057353421832133 107.03080632170354 A 58.0 58.0 0 0 1 10.153455607518225 30.346635736760927 Z" fill="royalblue" stroke="white" stroke-width="0.5" title="Hydro: 46006.6 GWh (23.6%)"/>     <path d="M 60.0 60.0 L 10.153455607518225 30.346635736760927 A 58.0 58.0 0 0 1 48.82106884089395 3.0875101744795614 Z" fill="darkorange" stroke="white" stroke-width="0.5" title="CCGT: 26077.0 GWh (13.4%)"/>     <path d="M 60.0 60.0 L 48.82106884089395 3.0875101744795614 A 58.0 58.0 0 0 1 59.99999999999999 2.0 Z" fill="orange" stroke="white" stroke-width="0.5" title="Solar: 6019.8 GWh (3.1%)"/> </svg>             <p style="font-size: 11px; margin: 5px 0;">                 <b>195.01 TWh</b>             </p>             <table style="font-size: 9px; width: 100%; margin: 5px 0;">         <tr><td style="text-align:left; color:purple; font-weight:bold;">■ Nuclear</td><td style="text-align:right;">36%</td></tr><tr><td style="text-align:left; color:darkgreen; font-weight:bold;">■ Wind</td><td style="text-align:right;">24%</td></tr><tr><td style="text-align:left; color:royalblue; font-weight:bold;">■ Hydro</td><td style="text-align:right;">24%</td></tr><tr><td style="text-align:left; color:darkorange; font-weight:bold;">■ CCGT</td><td style="text-align:right;">13%</td></tr><tr><td style="text-align:left; color:orange; font-weight:bold;">■ Solar</td><td style="text-align:right;">3%</td></tr><tr><td style="text-align:left; color:darkgray; font-weight:bold;">■ Coal</td><td style="text-align:right;">0%</td></tr></table></div></div>`)[0];
+                popup_80462ce5696c2c40c90e4c5d0b82878f.setContent(html_faeee218903066668f3fdf4fe44c41e9);
+            
+        
+
+        circle_marker_7ecaeed885c39350d347cd9bc6166f09.bindPopup(popup_80462ce5696c2c40c90e4c5d0b82878f)
+        ;
+
+        
+    
+    
+            var circle_marker_ed2078d78b6a999827cd0e413a3fb8de = L.circleMarker(
+                [39.4, -7.2],
+                {"bubblingMouseEvents": true, "color": "#FFA07A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FFA07A", "fillOpacity": 0.85, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.9, "radius": 35, "stroke": true, "weight": 2}
+            ).addTo(map_4df1d95f0ee5e3e089e07f0b2e698404);
+        
+    
+        var popup_af790ff23851de66b425389dee173796 = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_c541076392cb0a1d7dc0597201c56519 = $(`<div id="html_c541076392cb0a1d7dc0597201c56519" style="width: 100.0%; height: 100.0%;">         <div style="text-align: center; font-family: Arial; width: 150px;">             <h4 style="margin: 5px 0;">Portugal</h4>             <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">     <circle cx="60.0" cy="60.0" r="58.0" fill="white" stroke="#ddd" stroke-width="1"/>     <path d="M 60.0 60.0 L 60.0 2.0 A 58.0 58.0 0 1 1 45.55131758814252 116.17148365996113 Z" fill="darkgreen" stroke="white" stroke-width="0.5" title="Wind: 30874.4 GWh (54.0%)"/>     <path d="M 60.0 60.0 L 45.55131758814252 116.17148365996113 A 58.0 58.0 0 0 1 3.589855030919516 46.51313436830767 Z" fill="royalblue" stroke="white" stroke-width="0.5" title="Hydro: 14136.4 GWh (24.7%)"/>     <path d="M 60.0 60.0 L 3.589855030919516 46.51313436830767 A 58.0 58.0 0 0 1 52.746719702079325 2.4553223580164953 Z" fill="orange" stroke="white" stroke-width="0.5" title="Solar: 11015.8 GWh (19.3%)"/>     <path d="M 60.0 60.0 L 52.746719702079325 2.4553223580164953 A 58.0 58.0 0 0 1 59.99999999999999 2.0 Z" fill="darkorange" stroke="white" stroke-width="0.5" title="CCGT: 1140.8 GWh (2.0%)"/> </svg>             <p style="font-size: 11px; margin: 5px 0;">                 <b>57.17 TWh</b>             </p>             <table style="font-size: 9px; width: 100%; margin: 5px 0;">         <tr><td style="text-align:left; color:darkgreen; font-weight:bold;">■ Wind</td><td style="text-align:right;">54%</td></tr><tr><td style="text-align:left; color:royalblue; font-weight:bold;">■ Hydro</td><td style="text-align:right;">25%</td></tr><tr><td style="text-align:left; color:orange; font-weight:bold;">■ Solar</td><td style="text-align:right;">19%</td></tr><tr><td style="text-align:left; color:darkorange; font-weight:bold;">■ CCGT</td><td style="text-align:right;">2%</td></tr><tr><td style="text-align:left; color:darkgray; font-weight:bold;">■ Coal</td><td style="text-align:right;">0%</td></tr><tr><td style="text-align:left; color:purple; font-weight:bold;">■ Nuclear</td><td style="text-align:right;">0%</td></tr></table></div></div>`)[0];
+                popup_af790ff23851de66b425389dee173796.setContent(html_c541076392cb0a1d7dc0597201c56519);
+            
+        
+
+        circle_marker_ed2078d78b6a999827cd0e413a3fb8de.bindPopup(popup_af790ff23851de66b425389dee173796)
+        ;
+
+        
+    
+    
+            var poly_line_f062874729bf34e31da08561165f7a0f = L.polyline(
+                [[40.0, -2.7], [46.2, 3.2]],
+                {"bubblingMouseEvents": true, "color": "#2E5090", "dashArray": "5, 5", "dashOffset": null, "fill": false, "fillColor": "#2E5090", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.5, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_4df1d95f0ee5e3e089e07f0b2e698404);
+        
+    
+        var popup_c9c925c2a011fc7ab91e4e727008bb68 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3fe21a5c173d33964d4683510a9b054d = $(`<div id="html_3fe21a5c173d33964d4683510a9b054d" style="width: 100.0%; height: 100.0%;">ES ↔ FR</div>`)[0];
+                popup_c9c925c2a011fc7ab91e4e727008bb68.setContent(html_3fe21a5c173d33964d4683510a9b054d);
+            
+        
+
+        poly_line_f062874729bf34e31da08561165f7a0f.bindPopup(popup_c9c925c2a011fc7ab91e4e727008bb68)
+        ;
+
+        
+    
+    
+            var poly_line_b6720e7e27b528e7bb0f7bdf50dae4d2 = L.polyline(
+                [[46.2, 3.2], [41.9, 13.6]],
+                {"bubblingMouseEvents": true, "color": "#2E5090", "dashArray": "5, 5", "dashOffset": null, "fill": false, "fillColor": "#2E5090", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.5, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_4df1d95f0ee5e3e089e07f0b2e698404);
+        
+    
+        var popup_4e2ed89746f6cdf986eb5d4b66122b0e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1e5790a1b6f00a5cb7574fe0f312c7de = $(`<div id="html_1e5790a1b6f00a5cb7574fe0f312c7de" style="width: 100.0%; height: 100.0%;">FR ↔ IT</div>`)[0];
+                popup_4e2ed89746f6cdf986eb5d4b66122b0e.setContent(html_1e5790a1b6f00a5cb7574fe0f312c7de);
+            
+        
+
+        poly_line_b6720e7e27b528e7bb0f7bdf50dae4d2.bindPopup(popup_4e2ed89746f6cdf986eb5d4b66122b0e)
+        ;
+
+        
+    
+    
+            var poly_line_7ab2b0940a44576894e018abc785ebb0 = L.polyline(
+                [[40.0, -2.7], [41.9, 13.6]],
+                {"bubblingMouseEvents": true, "color": "#2E5090", "dashArray": "5, 5", "dashOffset": null, "fill": false, "fillColor": "#2E5090", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.5, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_4df1d95f0ee5e3e089e07f0b2e698404);
+        
+    
+        var popup_2f99f1bb780101a4b91bcfa6f520cab8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e75595fa2519ec7c65b2b7b51b0a1e8f = $(`<div id="html_e75595fa2519ec7c65b2b7b51b0a1e8f" style="width: 100.0%; height: 100.0%;">ES ↔ IT</div>`)[0];
+                popup_2f99f1bb780101a4b91bcfa6f520cab8.setContent(html_e75595fa2519ec7c65b2b7b51b0a1e8f);
+            
+        
+
+        poly_line_7ab2b0940a44576894e018abc785ebb0.bindPopup(popup_2f99f1bb780101a4b91bcfa6f520cab8)
+        ;
+
+        
+    
+    
+            var poly_line_681c2ad6e3b079bec2d50a87d1277d1a = L.polyline(
+                [[40.0, -2.7], [39.4, -7.2]],
+                {"bubblingMouseEvents": true, "color": "#2E5090", "dashArray": "5, 5", "dashOffset": null, "fill": false, "fillColor": "#2E5090", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.5, "smoothFactor": 1.0, "stroke": true, "weight": 2.5}
+            ).addTo(map_4df1d95f0ee5e3e089e07f0b2e698404);
+        
+    
+        var popup_d8d77a0af839be9b8d90eafbbee9ad23 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_140efdc85a65afe13a30c893f02cd644 = $(`<div id="html_140efdc85a65afe13a30c893f02cd644" style="width: 100.0%; height: 100.0%;">ES ↔ PT</div>`)[0];
+                popup_d8d77a0af839be9b8d90eafbbee9ad23.setContent(html_140efdc85a65afe13a30c893f02cd644);
+            
+        
+
+        poly_line_681c2ad6e3b079bec2d50a87d1277d1a.bindPopup(popup_d8d77a0af839be9b8d90eafbbee9ad23)
+        ;
+
+        
+    
+</script>
+</html>
