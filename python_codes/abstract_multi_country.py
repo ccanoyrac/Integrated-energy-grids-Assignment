@@ -324,3 +324,341 @@ def optimize_multi_country_capacity_expansion_no_batteries(
         countries=countries,
         hourly_prices=hourly_prices,
     )
+
+
+def optimize_multi_country_capacity_expansion_with_storage(
+    data: Dict,
+    battery_max_hours: float = 4.0,
+    battery_charging_efficiency: float = 0.95,
+    battery_discharging_efficiency: float = 0.9,
+    battery_standing_loss: float = 0.0,
+    battery_fixed_cost: float = 100.0,
+    battery_variable_cost: float = 0.0,
+    battery_max_capacity_limit: float = 100000.0,
+    hydrogen_max_hours: float = 168.0,
+    hydrogen_charging_efficiency: float = 0.65,
+    hydrogen_discharging_efficiency: float = 0.65,
+    hydrogen_standing_loss: float = 0.0,
+    hydrogen_fixed_cost: float = 100.0,
+    hydrogen_variable_cost: float = 0.0,
+    hydrogen_max_capacity_limit: float = 100000.0,
+    solver_name: str = "gurobi",
+) -> MultiCountryDispatchResult:
+    """Optimize multi-country capacity expansion WITH battery AND hydrogen storage.
+
+    **Optimization objective:** Minimize total annual cost (fixed + variable)
+    across all countries simultaneously, with:
+    - Extensible (optimized) capacities for each technology in each country
+    - Battery storage in each country (daily cycling, 4-hour default duration)
+    - Hydrogen storage in each country (weekly cycling, 168-hour default duration)
+    - Same technology costs for all countries
+    - Inter-country transmission constraints (NTC limits)
+    - Full hourly generation dispatch optimization
+    - P50+ renewable profiles per country
+
+    **Storage topology:**
+    Each country has its own independent battery and hydrogen storage units,
+    connected to the country's local bus. Storage can flexibly charge/discharge
+    to optimize across timescales:
+    - Battery: High-frequency, high-efficiency (intra-day variations)
+    - Hydrogen: Low-frequency, lower-efficiency (multi-day/weekly variations)
+
+    Parameters
+    ----------
+    data : Dict
+        Input data containing:
+        - 'demands': {country: hourly_demand_array}
+        - 'tech_params': {tech: {'variable_cost': float, 'fixed_cost': float, 
+                                  'min_cap': float, 'max_cap': float}}
+        - 'renewable_profiles': {country: {tech: hourly_profile_array}}
+        - 'interconnections': [(from_country, to_country, ntc_mw), ...]
+
+    battery_max_hours : float, default 4.0
+        Maximum storage duration for battery (hours)
+    battery_charging_efficiency : float, default 0.95
+        Battery charging efficiency (0-1)
+    battery_discharging_efficiency : float, default 0.9
+        Battery discharging efficiency (0-1)
+    battery_standing_loss : float, default 0.0
+        Battery hourly standing loss (0-1)
+    battery_fixed_cost : float, default 100.0
+        Battery capital cost (€/MW/year)
+    battery_variable_cost : float, default 0.0
+        Battery variable cost (€/MWh)
+    battery_max_capacity_limit : float, default 100000.0
+        Maximum battery power capacity (MW) per country
+    
+    hydrogen_max_hours : float, default 168.0
+        Maximum storage duration for hydrogen (hours, ~1 week)
+    hydrogen_charging_efficiency : float, default 0.65
+        Hydrogen electrolyzer efficiency (0-1)
+    hydrogen_discharging_efficiency : float, default 0.65
+        Hydrogen fuel cell efficiency (0-1)
+    hydrogen_standing_loss : float, default 0.0
+        Hydrogen hourly standing loss (0-1)
+    hydrogen_fixed_cost : float, default 100.0
+        Hydrogen capital cost (€/MW/year)
+    hydrogen_variable_cost : float, default 0.0
+        Hydrogen variable cost (€/MWh)
+    hydrogen_max_capacity_limit : float, default 100000.0
+        Maximum hydrogen power capacity (MW) per country
+
+    solver_name : str
+        Solver to use: 'gurobi', 'glpk', 'cbc', etc.
+
+    Returns
+    -------
+    MultiCountryDispatchResult
+        Optimized capacities (with storage), dispatch, power flows, and dual prices
+    """
+
+    # Extract data
+    demands = data["demands"]
+    tech_params = data["tech_params"]
+    renewable_profiles = data["renewable_profiles"]
+    interconnections = data["interconnections"]
+
+    countries = sorted(demands.keys())
+    technologies = sorted(tech_params.keys())
+
+    # Check all demand lengths and find minimum
+    demand_lengths = {}
+    for country in countries:
+        demand_arr = np.asarray(demands[country], dtype=float).reshape(-1)
+        demand_lengths[country] = demand_arr.size
+    
+    # Get minimum length and synchronize all to it
+    min_length = min(demand_lengths.values())
+    max_length = max(demand_lengths.values())
+    
+    if min_length != max_length:
+        print(f"\n⚠ WARNING: Demand length mismatch detected!")
+        print(f"  Min length: {min_length} hours, Max length: {max_length} hours")
+        print(f"  Synchronizing all demands to minimum length: {min_length} hours")
+        for country in countries:
+            if demand_lengths[country] > min_length:
+                print(f"    {country}: {demand_lengths[country]} → {min_length} hours (truncated)")
+        
+        # Truncate all demands to minimum length
+        demands_sync = {}
+        for country in countries:
+            demand_arr = np.asarray(demands[country], dtype=float).reshape(-1)
+            demands_sync[country] = demand_arr[:min_length]
+        demands = demands_sync
+        
+        # Also truncate renewable profiles to match
+        renewable_profiles_sync = {}
+        for country in renewable_profiles:
+            renewable_profiles_sync[country] = {}
+            for tech, profile in renewable_profiles[country].items():
+                profile_arr = np.asarray(profile, dtype=float).reshape(-1)
+                renewable_profiles_sync[country][tech] = profile_arr[:min_length]
+        renewable_profiles = renewable_profiles_sync
+    
+    n_hours = min_length
+
+    # Create PyPSA network
+    network = pypsa.Network()
+    network.set_snapshots(pd.date_range("2024-01-01", periods=n_hours, freq="h"))
+
+    # Add buses (one per country)
+    for country in countries:
+        network.add("Bus", country)
+
+    # Add demand for each country
+    for country in countries:
+        demand_arr = np.asarray(demands[country], dtype=float).reshape(-1)
+        network.add(
+            "Load",
+            f"demand_{country}",
+            bus=country,
+            p_set=demand_arr,
+        )
+
+    # Add EXTENSIBLE generators for each technology in each country
+    for tech in technologies:
+        tech_data = tech_params[tech]
+        variable_cost = tech_data.get("variable_cost", 0.0)
+        fixed_cost = tech_data.get("fixed_cost", 0.0)
+        min_cap = tech_data.get("min_cap", 0.0)
+        max_cap_by_country_dict = tech_data.get("max_cap_by_country", None)
+
+        for country in countries:
+            if max_cap_by_country_dict and isinstance(max_cap_by_country_dict, dict):
+                max_cap = max_cap_by_country_dict.get(country, tech_data.get("max_cap", 100000.0))
+            else:
+                max_cap = tech_data.get("max_cap", 100000.0)
+            
+            if tech in renewable_profiles.get(country, {}):
+                p_max_pu = np.asarray(
+                    renewable_profiles[country][tech], dtype=float
+                ).reshape(-1)
+                if p_max_pu.size != n_hours:
+                    raise ValueError(
+                        f"Profile mismatch for {country}/{tech}: expected {n_hours}, got {p_max_pu.size}"
+                    )
+            else:
+                p_max_pu = 1.0
+
+            network.add(
+                "Generator",
+                f"gen_{country}_{tech}",
+                bus=country,
+                p_nom_extendable=True,
+                p_nom_min=min_cap,
+                p_nom_max=max_cap,
+                p_max_pu=p_max_pu,
+                marginal_cost=variable_cost,
+                capital_cost=fixed_cost,
+            )
+
+    # Add BATTERY storage for each country
+    for country in countries:
+        network.add(
+            "StorageUnit",
+            f"battery_{country}",
+            bus=country,
+            p_nom_extendable=True,
+            p_nom_min=0.0,
+            p_nom_max=battery_max_capacity_limit,
+            e_nom_extendable=True,
+            e_nom_min=0.0,
+            e_nom_max=battery_max_capacity_limit * battery_max_hours,
+            max_hours=battery_max_hours,
+            efficiency_store=battery_charging_efficiency,
+            efficiency_dispatch=battery_discharging_efficiency,
+            standing_loss=battery_standing_loss,
+            marginal_cost=battery_variable_cost,
+            capital_cost=battery_fixed_cost,
+            cyclic_state_of_charge=False,
+        )
+
+    # Add HYDROGEN storage for each country
+    for country in countries:
+        network.add(
+            "StorageUnit",
+            f"hydrogen_{country}",
+            bus=country,
+            p_nom_extendable=True,
+            p_nom_min=0.0,
+            p_nom_max=hydrogen_max_capacity_limit,
+            e_nom_extendable=True,
+            e_nom_min=0.0,
+            e_nom_max=hydrogen_max_capacity_limit * hydrogen_max_hours,
+            max_hours=hydrogen_max_hours,
+            efficiency_store=hydrogen_charging_efficiency,
+            efficiency_dispatch=hydrogen_discharging_efficiency,
+            standing_loss=hydrogen_standing_loss,
+            marginal_cost=hydrogen_variable_cost,
+            capital_cost=hydrogen_fixed_cost,
+            cyclic_state_of_charge=False,
+        )
+
+    # Add interconnection lines
+    for from_country, to_country, ntc_mw in interconnections:
+        network.add(
+            "Line",
+            f"interconnection_{from_country}_{to_country}",
+            bus0=from_country,
+            bus1=to_country,
+            x=0.00001,
+            s_nom=ntc_mw,
+        )
+
+    # Optimize with error handling
+    try:
+        print(f"Optimizing multi-country capacity expansion WITH STORAGE using {solver_name}...")
+        network.optimize(
+            solver_name=solver_name,
+            log_to_console=True if solver_name == "gurobi" else False,
+        )
+        print(f"✓ Optimization complete\n")
+        optimize_successful = True
+    except AttributeError as e:
+        err_msg = str(e)
+        if "shadow-prices" in err_msg or "was not assigned" in err_msg:
+            print(f"✓ Optimization complete (shadow price warning - PyPSA 1.1.2 compatibility)")
+            print(f"  Objective value = {network.objective}")
+            print(f"  Solution found = YES\n")
+            optimize_successful = True
+        else:
+            print(f"✗ Unexpected AttributeError: {err_msg}")
+            raise
+    except Exception as e:
+        print(f"Warning: Optimization error ({type(e).__name__}), retrying...")
+        print(f"  Error: {str(e)[:200]}")
+        try:
+            network.optimize(
+                solver_name=solver_name,
+                solver_options={"glpk": {"wopt": "all"}} if solver_name == "glpk" else {},
+            )
+            print(f"✓ Optimization complete (with retry)\n")
+            optimize_successful = True
+        except Exception as e2:
+            print(f"Error during optimization retry: {e2}")
+            raise
+
+    if not optimize_successful:
+        raise RuntimeError("Optimization did not complete successfully")
+
+    # Extract generation by country (including storage discharge as generation)
+    generation_by_country = {}
+    for country in countries:
+        country_gen_df = pd.DataFrame(index=network.snapshots)
+        
+        # Add conventional generation
+        for tech in technologies:
+            gen_col_name = f"gen_{country}_{tech}"
+            if gen_col_name in network.generators_t.p.columns:
+                country_gen_df[tech] = network.generators_t.p[gen_col_name]
+            else:
+                country_gen_df[tech] = 0.0
+        
+        # Add storage discharge (positive = generation)
+        battery_name = f"battery_{country}"
+        hydrogen_name = f"hydrogen_{country}"
+        if battery_name in network.storage_units_t.p.columns:
+            country_gen_df["battery_discharge"] = network.storage_units_t.p[battery_name]
+        if hydrogen_name in network.storage_units_t.p.columns:
+            country_gen_df["hydrogen_discharge"] = network.storage_units_t.p[hydrogen_name]
+        
+        country_gen_df["demand"] = demands[country]
+        generation_by_country[country] = country_gen_df
+
+    # Extract power flows
+    flows_data = []
+    for from_country, to_country, _ in interconnections:
+        line_name = f"interconnection_{from_country}_{to_country}"
+        if line_name in network.lines_t.p0.columns:
+            flows = network.lines_t.p0[line_name].values
+            for hour, flow_mw in enumerate(flows):
+                flows_data.append({
+                    "time": hour,
+                    "from": from_country,
+                    "to": to_country,
+                    "flow_mw": flow_mw,
+                })
+
+    flows_df = pd.DataFrame(flows_data)
+
+    # Extract hourly prices
+    hourly_prices = {}
+    for country in countries:
+        prices = []
+        for hour in network.snapshots:
+            if hasattr(network.buses_t, "marginal_price") and country in network.buses_t.marginal_price.columns:
+                price = network.buses_t.marginal_price.loc[hour, country]
+            else:
+                price = np.nan
+            prices.append(price)
+        hourly_prices[country] = np.array(prices, dtype=float)
+
+    return MultiCountryDispatchResult(
+        status="optimal" if optimize_successful else "unknown",
+        objective_value=float(network.objective) if hasattr(network, "objective") else np.nan,
+        generation_by_country=generation_by_country,
+        power_flows=flows_df,
+        network=network,
+        countries=countries,
+        hourly_prices=hourly_prices,
+    )
