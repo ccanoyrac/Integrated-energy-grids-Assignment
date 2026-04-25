@@ -223,16 +223,33 @@ def optimize_multi_country_capacity_expansion_no_batteries(
                 capital_cost=fixed_cost,  # Annualized capital cost (€/MW/year)
             )
 
-    # Add interconnection lines
-    # Each interconnection is a bidirectional line with capacity limits
+    # Add interconnection lines with DC power flow (p_l = x_l * (theta_i - theta_j))
+    # Calculate per-unit reactance from typical transmission line parameters
+    # Base: V=400kV, S_base=100MVA -> Z_base=1600 Ω
+    # Typical series reactance: 0.3-0.4 Ω/km
+    
+    # Distance estimates and reactance (p.u., for 400kV AC)
+    line_reactances = {
+        ('ES', 'FR'): 0.12,   # ~600 km, X≈192 Ω -> 0.12 p.u.
+        ('FR', 'IT'): 0.095,  # ~400 km, X≈128 Ω -> 0.095 p.u.
+        ('ES', 'IT'): 0.19,   # ~1000 km, X≈304 Ω -> 0.19 p.u.
+        ('ES', 'PT'): 0.08,   # ~350 km, X≈112 Ω -> 0.08 p.u.
+    }
+    
     for from_country, to_country, ntc_mw in interconnections:
+        # Use DC power flow: p = (1/x) * (theta_i - theta_j)
+        # where x is reactance in p.u.
+        key = (from_country, to_country)
+        reactance = line_reactances.get(key, 0.12)
+        
         network.add(
             "Line",
             f"interconnection_{from_country}_{to_country}",
             bus0=from_country,
             bus1=to_country,
-            x=0.00001,  # Very small reactance to ensure uniqueness
-            s_nom=ntc_mw,  # NTC capacity
+            x=reactance,  # DC power flow reactance (p.u.)
+            r=0.0,  # No resistance in DC formulation
+            s_nom=ntc_mw,  # Physical capacity limit (for reference)
         )
 
     # Optimize with error handling
@@ -554,15 +571,28 @@ def optimize_multi_country_capacity_expansion_with_storage(
             cyclic_state_of_charge=False,
         )
 
-    # Add interconnection lines
+    # Add interconnection lines with DC power flow (p_l = x_l * (theta_i - theta_j))
+    # Line reactance values (p.u., for 400kV AC base)
+    line_reactances = {
+        ('ES', 'FR'): 0.12,   # ~600 km: X≈192 Ω -> 0.12 p.u.
+        ('FR', 'IT'): 0.095,  # ~400 km: X≈128 Ω -> 0.095 p.u.
+        ('ES', 'IT'): 0.19,   # ~1000 km: X≈304 Ω -> 0.19 p.u.
+        ('ES', 'PT'): 0.08,   # ~350 km: X≈112 Ω -> 0.08 p.u.
+    }
+    
     for from_country, to_country, ntc_mw in interconnections:
+        key = (from_country, to_country)
+        reactance = line_reactances.get(key, 0.12)
+        
+        # DC power flow formulation: p = (1/x) * (theta_i - theta_j)
         network.add(
             "Line",
             f"interconnection_{from_country}_{to_country}",
             bus0=from_country,
             bus1=to_country,
-            x=0.00001,
-            s_nom=ntc_mw,
+            x=reactance,  # DC power flow reactance (p.u.)
+            r=0.0,  # No resistance in DC formulation
+            s_nom=ntc_mw,  # Physical capacity limit
         )
 
     # Optimize with error handling
