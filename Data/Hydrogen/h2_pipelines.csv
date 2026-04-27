@@ -1,0 +1,5 @@
+# Placeholder cross-border H2 pipeline capacities. Links are added in both directions in the builder.
+country0,country1,p_nom_mwh_per_h,efficiency,marginal_cost_eur_per_mwh
+ES,FR,500,0.99,0
+FR,IT,450,0.99,0
+ES,PT,300,0.99,0

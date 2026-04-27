@@ -1,0 +1,6 @@
+# Placeholder fixed H2 production capacity. Values are MWh_H2/h and are not linked to electricity yet.
+country,p_nom_mwh_per_h,availability_pu,marginal_cost_eur_per_mwh
+ES,1200,1.0,0
+FR,1500,1.0,0
+IT,1000,1.0,0
+PT,600,1.0,0

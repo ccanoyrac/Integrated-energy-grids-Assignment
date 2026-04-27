@@ -1,12 +1,12 @@
-Technology,Category,Overnight Cost,Unit,FOM (%/a),Lifetime (a),Efficiency,Fuel Cost (€/MWh)
-Wind onshore,wind,1182,kWel,3,25,1,0
-Wind offshore,wind,2506,kWel,3,25,1,0
-Solar PV rooftop,solar,725,kWel,2,25,1,0
-Solar PV utility,solar,425,kWel,3,25,1,0
-Pumped hydro storage,hydro,2000,kWel,1,80,0.87,0
-Hydro reservoir,hydro,2000,kWel,1,80,0.9,0
-Run-of-river,hydro,3000,kWel,2,80,0.9,0
-Combined heat and power (CHP) central,chp,600,kWth,3,25,0.8,87.50
-Open cycle gas turbine (OCGT),fossil,400,kWel,4,30,0.39,30.00
-Coal,coal,3000,kWel,3,40,0.40,61.52
-Nuclear,nuclear,6000,kWel,2.5,60,0.33,8.50
+Technology,Category,Overnight Cost,Unit,FOM (%/a),Lifetime (a),Efficiency,Fuel Cost (€/MWh),Annualized Cost (€/kW/a)
+Wind onshore,wind,1182,kWel,3,25,1,0,83.78
+Wind offshore,wind,2506,kWel,3,25,1,0,177.78
+Solar PV rooftop,solar,725,kWel,2,25,1,0,51.44
+Solar PV utility,solar,425,kWel,3,25,1,0,30.15
+Pumped hydro storage,hydro,2000,kWel,1,80,0.87,0,102.04
+Hydro reservoir,hydro,2000,kWel,1,80,0.9,0,102.04
+Run-of-river,hydro,3000,kWel,2,80,0.9,0,153.05
+Combined heat and power (CHP) central,chp,600,kWth,3,25,0.8,87.50,42.57
+Open cycle gas turbine (OCGT),fossil,400,kWel,4,30,0.39,30.00,26.02
+Coal,coal,3000,kWel,3,40,0.40,61.52,174.61
+Nuclear,nuclear,6000,kWel,2.5,60,0.33,8.50,317.04
