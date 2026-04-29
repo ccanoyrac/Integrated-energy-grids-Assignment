@@ -190,6 +190,8 @@ def run_co2_constrained(
     # 2. Copy the solved network and inject CO2 carriers + GlobalConstraint
     #    then re-optimize so all capacities are free to adjust
     # ------------------------------------------------------------------
+    if hasattr(base_result.network, "model") and base_result.network.model is not None:
+        base_result.network.model.solver_model = None
     network = base_result.network.copy()
     countries = base_result.countries
 
@@ -218,9 +220,16 @@ def run_co2_constrained(
     print(f"RE-OPTIMIZING WITH CO2 CAP  (solver: {solver_name})")
     print(f"{'─' * 80}\n")
 
+    _solver_opts = (
+        {"Method": 2, "NodefileStart": 0.5, "BarHomogeneous": 1}
+        if solver_name == "gurobi"
+        else {}
+    )
+
     try:
         network.optimize(
             solver_name=solver_name,
+            solver_options=_solver_opts,
             log_to_console=(solver_name == "gurobi"),
         )
     except AttributeError as e:
