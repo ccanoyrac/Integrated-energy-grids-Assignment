@@ -1,6 +1,0 @@
-# Placeholder fixed hydrogen consumption by fuel cells. This is an H2 sink only, not electricity generation.
-country,h2_consumption_mwh_per_h
-ES,250
-FR,300
-IT,220
-PT,120

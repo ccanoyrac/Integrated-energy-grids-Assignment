@@ -1,6 +1,0 @@
-# Placeholder country-level H2 storage inventory. Energy capacity is MWh_H2.
-country,e_nom_mwh,e_initial_mwh,standing_loss_per_hour,e_cyclic,marginal_cost_eur_per_mwh
-ES,24000,12000,0.0001,False,0
-FR,30000,15000,0.0001,False,0
-IT,20000,10000,0.0001,False,0
-PT,12000,6000,0.0001,False,0
