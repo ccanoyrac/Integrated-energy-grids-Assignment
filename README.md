@@ -1,118 +1,15 @@
-# Integrated Energy Grids - Capacity Expansion Planning
+# Integrated Energy Grids — Course Assignment (46770)
 
-A comprehensive energy systems optimization project for analyzing and optimizing electricity generation capacity expansion for Spain and neighboring European countries (France, Italy, Portugal). This project uses mathematical optimization to determine cost-optimal technology portfolios under different scenarios.
+**DTU — Technical University of Denmark**
+Master's-level course project covering capacity expansion planning and multi-sector energy system optimization for Southern European countries.
+
+---
 
 ## Overview
 
-This repository contains Jupyter notebooks and Python modules for solving **capacity expansion planning problems** in integrated energy grids. The analysis determines optimal installed capacities (MW) for different generation technologies to minimize total system costs while satisfying hourly electricity demand over a full year (8,760 hours).
+This project models and optimizes integrated electricity, hydrogen, and heat grids using linear programming. It progresses from a single-country electricity dispatch to a fully coupled multi-country, multi-sector energy system — reflecting real-world energy transition challenges such as renewable integration, storage sizing, transmission planning, and sector coupling.
 
-### Key Features
-
-- **Two Analysis Scenarios:**
-  - **Single-country:** Spain's electricity system in isolation
-  - **Multi-country:** Coupled optimization across Spain, France, Italy, and Portugal with HVDC interconnections
-
-- **Technology Portfolio:** Wind, Solar, Hydro, CCGT (gas), Coal, Nuclear, Battery Storage, Hydrogen Storage
-
-- **Optimization Engine:** PyPSA (Python for Power System Analysis) with multiple solver backends (Gurobi, HiGHS, GLPK)
-
-- **Comprehensive Outputs:** Capacity expansion results, hourly dispatch schedules, cost analysis, visualization of electricity mix and interconnection flows
-
----
-
-## Notebooks
-
-### 1. **IEG_Assignment_Single_country.ipynb**
-Single-country capacity expansion optimization for Spain.
-
-**Workflow:**
-1. **Data Collection & Preprocessing**
-   - Load installed capacity data from Spanish operator (REE)
-   - Extract hourly operating program (demand profile)
-   - Import daily gas price data (MIBGAS-ES index)
-   - Compile capacity by technology and compute capacity factors for renewables
-
-2. **Input Analysis**
-   - Visualize full-year demand patterns (hourly, seasonal)
-   - Analyze renewable resource availability (wind, solar, hydro capacity factors)
-   - Validate data consistency and coverage
-
-3. **Capacity Expansion Optimization (without storage)**
-   - Optimize technology capacities to minimize cost
-   - Determine hourly dispatch for all 8,760 hours
-   - Outputs: Optimal capacities, generation mix, total annual cost
-
-4. **Capacity Expansion with Battery Storage**
-   - Extend optimization to include battery storage (BESS)
-   - Optimize battery power rating (MW) and energy capacity (MWh)
-   - Compare costs with/without storage
-   - Analyze battery charge/discharge patterns
-
-5. **Multi-scenario Analysis (2030 Projections)**
-   - Run optimization with different future demand scenarios
-   - Include hydrogen storage option
-   - Compare technology portfolios and costs across scenarios
-
-6. **Results & Visualization**
-   - Hourly dispatch schedule plots
-   - Annual electricity generation mix (pie charts)
-   - Cost breakdown by technology
-   - Battery state-of-charge profiles
-   - Interactive HTML plots of supply/demand matching
-
-**Key Outputs:**
-- Optimal installed capacities for each technology
-- Hourly generation schedule
-- Annual system cost (fixed + variable costs)
-- Seasonal and hourly demand patterns
-- Renewable generation capacity factors
-
----
-
-### 2. **IEG_Assignment_Multi_country.ipynb**
-Multi-country capacity expansion with international interconnections.
-
-**Workflow:**
-1. **Multi-country Data Setup**
-   - Load capacity and generation profiles for Spain, France, Italy, Portugal
-   - Extract hourly demand for each country
-   - Calculate renewable profiles (wind, solar, hydro capacity factors)
-   - Aggregate by country
-
-2. **Country-level Analysis**
-   - Analyze electricity demand patterns per country
-   - Compare renewable resource availability across regions
-   - Visualize full-year hourly profiles for each country
-
-3. **Multi-country Interconnection Mapping**
-   - Define HVDC transmission links between countries
-   - Specify transmission capacity limits
-   - Model transmission losses
-
-4. **Coupled Multi-country Optimization**
-   - Optimize capacities simultaneously across all countries
-   - Model power flows through interconnections
-   - Minimize combined system cost (all countries)
-   - Account for transmission constraints and losses
-
-5. **Multi-scenario Analysis**
-   - Compare scenarios with/without storage
-   - Analyze trade-offs between local generation and imports
-   - Evaluate portfolio diversity across regions
-
-6. **Visualization & Analysis**
-   - Country-specific generation dispatch
-   - Interconnection power flows (hourly, seasonal)
-   - Cost comparison across countries and scenarios
-   - Heatmaps of renewable generation by country
-   - Interactive maps of electricity mix by region
-
-**Key Outputs:**
-- Optimal capacities for each technology in each country
-- Hourly power flows on each interconnection
-- Regional cost breakdowns
-- Renewable integration levels per country
-- System reliability metrics
+The geographic focus is **Spain, France, Italy, and Portugal**, using real hourly demand and renewable generation profiles.
 
 ---
 
@@ -120,235 +17,171 @@ Multi-country capacity expansion with international interconnections.
 
 ```
 Integrated-energy-grids-Assignment/
-├── README.md                                    # This file
-├── IEG_Assignment_Single_country.ipynb          # Single-country optimization
-├── IEG_Assignment_Multi_country.ipynb           # Multi-country optimization
-├── python_codes/
-│   ├── Abstract_model.py                        # Core optimization model
-│   └── abstract_multi_country.py                # Multi-country model extension
-├── Data/
-│   ├── export_InstalledCapacityGenerationTotal_2026-03-03_17_12.csv
-│   ├── export_OperatingHourlyProgramGeneration+Storage+BalearicHVDCLinkP48_2026-03-03_17_22.csv
-│   ├── Gas prices Spain 2025.csv
-│   ├── Spain_future_generation_&_demand.csv
-│   ├── Techs_cost_FOM_&_Fuel_cost.csv
-│   └── Countries interconnected Data/
-│       ├── France_AGGREGATED_GENERATION_PER_TYPE_GENERATION.csv
-│       ├── france_capacity_non_renewables.csv
-│       ├── Italy_AGGREGATED_GENERATION_PER_TYPE_GENERATION.csv
-│       ├── italy_capacity_non_renewables.csv
-│       ├── Portugal_AGGREGATED_GENERATION_PER_TYPE_GENERATION.csv
-│       └── portugal_capacity_non_renewables.csv
-├── Plots/                                       # Generated visualizations
-│   ├── 0_Input Data/
-│   ├── 1_Spanish_economic_dispatch/
-│   ├── 2_Battery_economic_dispatch_(Spain)/
-│   ├── 3_Battery_economic_dispatch_multiple_scenarios_(Spain)/
-│   ├── 4_Battery_economic_dispatch_2030/
-│   ├── 5_Multi_country_economic_dispatch/
-│   └── 7_Annual_electricity_mix_*.html         # Interactive HTML maps
-└── back-up projects/                            # Previous assignment versions
-
+├── python_codes/                          # Core optimization modules
+│   ├── Abstract_model.py                  # Single-country capacity expansion
+│   ├── abstract_multi_country.py          # Multi-country dispatch
+│   ├── integrated_electricity_hydrogen.py # Electricity + H2 network
+│   ├── integrated_electricity_hydrogen_heat.py  # Electricity + H2 + heat
+│   └── co2_analysis.py                    # CO2-constrained optimization
+│
+├── IEG_1_Single_country.ipynb             # Assignment 1a–c: single country
+├── IEG_2_Interannual_Variability.ipynb    # Assignment 1b: climate variability
+├── IEG_3_Multi_country.ipynb              # Assignment 1d: multi-country network
+├── IEG_4_Elec_&_H2.ipynb                 # Assignment 2g: electricity + hydrogen
+├── IEG_5_Elec_&_H2_&_Heat.ipynb          # Assignment 2i: full sector coupling
+├── IEG_6_Elec_&_H2_&_Heat_(Nuclear_Constrained).ipynb  # Regional policy scenario
+│
+├── Data/                                  # Input data (CSVs, Excel)
+├── Plots/                                 # Generated figures
+├── IEG_Course_Project_Part1.pdf           # Assignment specification (Part 1)
+└── IEG_Course_Project_Part2.pdf           # Assignment specification (Part 2)
 ```
 
 ---
 
-## Mathematical Model
+## Assignment Tasks
 
-### Objective Function
+### Part 1 — Electricity Grid Fundamentals
 
-Minimize total annual system cost:
+| Task | Description | Notebook |
+|------|-------------|----------|
+| **a** | Single-country optimal capacity expansion (wind, solar, hydro, CCGT, coal, nuclear) | `IEG_1_Single_country.ipynb` |
+| **b** | Interannual weather variability across 2020–2024 | `IEG_2_Interannual_Variability.ipynb` |
+| **c** | Battery and hydrogen storage integration | `IEG_1_Single_country.ipynb` |
+| **d** | Multi-country network with HVAC interconnections | `IEG_3_Multi_country.ipynb` |
+| **e** | Network analysis: incidence matrix and PTDF calculations *(pen & paper)* | — |
 
-$$Z = \sum_{t \in T} FC_t \cdot C_t + \sum_{t \in T} \sum_{h \in H} VC_t \cdot G_{t,h}$$
+### Part 2 — Multi-Sector Energy Integration
 
-Where:
-- $FC_t$ = Fixed cost for technology $t$ (€/MW/year)
-- $VC_t$ = Variable cost for technology $t$ (€/MWh)
-- $C_t$ = Installed capacity (MW)
-- $G_{t,h}$ = Generation at hour $h$ (MWh)
-- $T$ = Set of technologies
-- $H$ = Set of hourly time steps (8,760 hours/year)
-
-### Key Constraints
-
-1. **Power Balance (Demand satisfaction):**
-$$\sum_{t \in T} G_{t,h} = D_h \quad \forall h \in H$$
-
-2. **Renewable Generation Limits:**
-$$G_{t,h} \leq CF_{t,h} \cdot C_t \quad \forall t \in T_{renewable}, h \in H$$
-
-3. **Dispatchable Generation Limits:**
-$$G_{t,h} \leq C_t \quad \forall t \in T_{dispatchable}, h \in H$$
-
-4. **Capacity Bounds:**
-$$0 \leq C_t \leq C_t^{max} \quad \forall t \in T$$
+| Task | Description | Notebook |
+|------|-------------|----------|
+| **f** | CO2 sensitivity analysis on capacity mix | `co2_analysis.py` |
+| **g** | Hydrogen and methane pipeline integration | `IEG_4_Elec_&_H2.ipynb` |
+| **h** | CO2 pricing and carbon tax comparison (shadow prices) | `IEG_4_Elec_&_H2.ipynb` |
+| **i** | Electricity + hydrogen + heat sector coupling | `IEG_5_Elec_&_H2_&_Heat.ipynb` |
+| **j** | Regional policy scenario (nuclear constraint, France) | `IEG_6_...Nuclear_Constrained.ipynb` |
 
 ---
 
-## Technologies Included
+## Technology Database
 
-| Technology | Type | Cost Structure | Constraint |
-|-----------|------|---------------|-----------| 
-| **Wind** | Renewable | Fixed + Variable | Limited by capacity factor profile |
-| **Solar** | Renewable | Fixed + Variable | Limited by capacity factor profile |
-| **Hydro** | Renewable | Fixed + Variable | Capped at ~4,698 MW (Spain) |
-| **CCGT** | Dispatchable | Fixed + Variable | Dispatchable up to capacity |
-| **Coal** | Dispatchable | Fixed + Variable | Dispatchable up to capacity |
-| **Nuclear** | Dispatchable | Fixed + Variable | Dispatchable up to capacity |
-| **Battery Storage** | Storage | Fixed + Variable | Energy-limited (MWh) |
-| **Hydrogen Storage** | Storage | Fixed + Variable | Energy-limited (MWh) |
+Technologies are parameterized from IEA and ENTSO-E cost data. Three progressive cost files are used across assignments.
+
+| Category | Technology | Annualized Cost (€/kW/a) | Efficiency | Fuel Cost (€/MWh) |
+|----------|-----------|--------------------------|------------|-------------------|
+| Wind | Onshore wind | 83.78 | 1.0 | 0 |
+| Wind | Offshore wind | 177.78 | 1.0 | 0 |
+| Solar | Utility-scale PV | 30.15 | 1.0 | 0 |
+| Solar | Rooftop PV | 51.44 | 1.0 | 0 |
+| Hydro | Pumped hydro | 102.04 | 0.87 | 0 |
+| Hydro | Reservoir | 102.04 | 0.90 | 0 |
+| Hydro | Run-of-river | 153.05 | 0.90 | 0 |
+| Fossil | OCGT | 26.02 | 0.39 | 30.00 |
+| Fossil | Coal | 174.61 | 0.40 | 61.52 |
+| Nuclear | Nuclear | 317.04 | 0.33 | 8.50 |
+| CHP | CHP central | 42.57 | 0.80 | 87.50 |
+| Storage | Battery | 43.35 | 0.90 | 0 |
+| Storage | Hydrogen | 198.65 | 0.35 | 0 |
+| Heat pump | Air-source (decentral) | 121.00 | COP 3.0 | 0 |
+| Heat pump | Air-source (central) | 80.67 | COP 3.0 | 0 |
+| Heat pump | Ground-source (decentral) | 161.33 | COP 3.5 | 0 |
+
+---
+
+## Core Optimization Modules
+
+### `Abstract_model.py`
+Single-country linear program for capacity expansion. Minimizes annualized capital cost plus hourly variable cost. Supports:
+- Basic generation mix (no storage)
+- Battery + hydrogen dual-storage co-optimization
+- CO2-capped scenarios via global constraint
+
+### `abstract_multi_country.py`
+Extends the model to a four-country network (ES–FR–IT–PT). One bus per country; bidirectional HVAC interconnections with NTC limits. Returns hourly power flows and shadow prices (marginal costs by country and hour).
+
+### `integrated_electricity_hydrogen.py`
+Adds a hydrogen bus per country. Coupling elements: electrolyzer (electricity → H2), fuel cell (H2 → electricity), H2 storage (≥168 h duration), and cross-border H2 pipelines. H2 demand is configurable as a fraction of electricity demand.
+
+### `integrated_electricity_hydrogen_heat.py`
+Extends to three sectors per country: electricity, hydrogen, and heat. Adds heat pumps (COP 3.0–3.5) and CHP units (≈40% electrical + 40% thermal efficiency). Enables full sector-coupling cost analysis.
+
+### `co2_analysis.py`
+Parametric CO2 sweep over a range of emission caps. Extracts the CO2 shadow price (€/tCO₂) from the LP dual variable. Emission factors: Coal 0.896 tCO₂/MWh, CCGT 0.367 tCO₂/MWh.
+
+---
+
+## Data Sources
+
+| File | Description |
+|------|-------------|
+| `Techs_cost_FOM_&_Fuel_cost.csv` | Technology costs for Part 1 (12 technologies) |
+| `Techs_&_storage_cost_FOM_&_Fuel_cost.csv` | Adds battery + H2 storage |
+| `Techs_&_storage_&_Heat_pump_cost_FOM_&_Fuel_cost.csv` | Adds heat pumps (Part 2) |
+| `generation_by_tech_2024.csv` | Hourly generation per technology (8 760 values) |
+| `Spain_future_generation_&_demand.csv` | 2024–2030 demand and generation projections |
+| `International_exchanges_January_2024.xlsx` | ENTSO-E cross-border flow data |
+| `Gas prices Spain 2025.csv` | Monthly gas price profiles |
+
+Renewable generation profiles are P50 (median) hourly capacity factors. Temporal resolution is **hourly** over a full year (8 760 time steps).
+
+---
+
+## Modeling Approach
+
+- **Optimization framework:** [PyPSA](https://pypsa.org) (Python for Power System Analysis)
+- **Problem type:** Linear programming (LP) for dispatch; mixed-integer (MIP) for investment
+- **Solver:** Gurobi (primary); GLPK / CBC (fallback)
+- **Time horizon:** Full year, hourly resolution
+- **Network topology:** DC power flow approximation; one bus per country
+
+**Key constraints:**
+- Nodal power balance (per bus, per hour)
+- Renewable generation upper bound (p.u. capacity factor profiles)
+- Transmission capacity limits (NTC between countries)
+- Storage energy balance with cyclic end conditions (battery: 4 h; H2: 168 h)
+- Optional global CO2 emission cap
+
+**Key outputs:**
+- Optimal installed capacity by technology (MW)
+- Hourly dispatch (MWh/h) and storage state-of-charge
+- Interconnection power and H2 pipeline flows
+- Marginal prices by bus and hour (€/MWh)
+- CO2 shadow price (€/tCO₂) for carbon-constrained scenarios
+- Technology cost breakdown (fixed vs. variable)
 
 ---
 
 ## Requirements
 
-### Python Packages
-- `pandas` - Data manipulation
-- `numpy` - Numerical computing
-- `pypsa` ≥ 0.26.0 - Power system optimization
-- `linopy` ≥ 0.7.0 - Linear optimization interface
-- `gurobi` or `highspy` - Optimization solvers
-- `matplotlib` - Plotting
-- `plotly` - Interactive visualizations
-- `folium` - Interactive maps
-- `xarray` < 2026 - Data structures (version constraint for PyPSA compatibility)
+```bash
+pip install pypsa pandas numpy matplotlib seaborn xarray linopy
+```
 
-### Solvers
-- **Gurobi** (academic license, recommended) - Robust, fast
-- **HiGHS** (open-source) - Good alternative
-- **GLPK** - Fallback option (avoid on Windows due to file locking issues)
-
-### System Requirements
-- **Disk Space:** ~2-5 GB for full-year optimization (linopy creates large temporary LP files)
-- **RAM:** 8+ GB recommended
-- **Windows Users:** See [PyProj CRS Database Error](https://github.com/DTU/integrated-energy-grids/wiki#pyproj-crs-database-error) in troubleshooting
+A Gurobi license is recommended for larger models. The code falls back to open-source solvers automatically.
 
 ---
 
 ## Usage
 
-### Step 1: Setup Environment
+Run notebooks in order (`IEG_1` → `IEG_6`) to follow the pedagogical progression. Each notebook is self-contained: it loads data, runs the relevant optimization module, and generates plots to `Plots/`.
 
-```bash
-# Create conda environment
-conda create -n ieg_env python=3.10
+To run a standalone optimization:
 
-# Activate environment
-conda activate ieg_env
+```python
+from python_codes.Abstract_model import optimize_capacity_expansion, CapacityExpansionInput
 
-# Install dependencies
-pip install pandas numpy pypsa>=0.26.0 linopy>=0.7.0 matplotlib plotly folium gurobi
+result = optimize_capacity_expansion(inputs)
+print(result.optimal_capacities)
 ```
 
-### Step 2: Run Notebooks
-
-#### Single-country Analysis:
-```bash
-jupyter notebook IEG_Assignment_Single_country.ipynb
-```
-Run cells sequentially from top to bottom. Each section outputs progress and generates plots in the `Plots/` directory.
-
-#### Multi-country Analysis:
-```bash
-jupyter notebook IEG_Assignment_Multi_country.ipynb
-```
-Similar workflow to single-country, but extends to Spain + neighbors.
-
-### Step 3: Interpret Results
-
-**Look for these outputs in notebooks:**
-- **Optimal capacities table:** Shows recommended MW for each technology
-- **Generation dispatch plots:** Hourly generation by technology
-- **Cost summary:** Breakdown of fixed vs. variable costs
-- **Electricity mix:** Pie charts showing % generation by technology
-- **Interactive maps:** Country-level visualization in `Plots/7_Annual_electricity_mix_*.html`
-
 ---
 
-## Common Issues & Troubleshooting
+## Results
 
-### Issue 1: PermissionError with GLPK on Windows
-**Error:** `PermissionError: [WinError 32] El proceso no tiene acceso al archivo`
-**Solution:** Switch to Gurobi or HiGHS solver. Avoid retrying solve on same network object.
-
-### Issue 2: DISK SPACE - OSError [Errno 28] No space left on device
-**Root Cause:** linopy creates ~2GB+ temporary files during optimization
-**Solutions:**
-1. Use smaller time period (e.g., representative week = 168 hours)
-2. Clean Windows temp folder: `C:\Users\<user>\Temp`
-3. Use MPS format instead of LP (potentially smaller)
-
-### Issue 3: PyProj CRS Database Error
-**Error:** `pyproj.exceptions.CRSError: Invalid projection: EPSG:4326`
-**Solution:**
-```bash
-pip install --upgrade pyproj
-# OR (for Windows)
-conda install -y --force-reinstall pyproj proj
-```
-
-### Issue 4: Solver Not Found
-**Error:** `SolverError: Solver 'gurobi' not found`
-**Solutions:**
-- Install Gurobi: `pip install gurobi`
-- Or use HiGHS: `pip install highspy`
-- Check installation: `python -c "import gurobipy; print(gurobipy.gurobi.version())"`
-
----
-
-## Output Files
-
-### Automatically Generated
-- **Plots/** - Directory containing all visualizations
-  - Hourly dispatch charts (PNG)
-  - Capacity and generation tables (HTML)
-  - Interactive electricity mix maps (HTML with Folium)
-  - Seasonal analysis plots
-  - Cost breakdown charts
-
-### Key Data Structures (in-notebook)
-- `result` - CapacityExpansionResult object with optimal solution
-- `solution_df` - DataFrame with hourly dispatch schedule
-- `capacity_table` - DataFrame with optimized capacities by technology
-- `cost_summary_df` - DataFrame with cost breakdown
-
----
-
-## References
-
-### Theory & Methods
-- PyPSA Documentation: https://pypsa.readthedocs.io/
-- Linear optimization with linopy: https://linopy.readthedocs.io/
-- Capacity expansion planning in power systems (academic literature)
-
-### Data Sources
-- Spanish electricity operator (REE) - Capacity and generation data
-- MIBGAS - Gas price data
-- European TSOs - Multi-country generation and capacity data
-
----
-
-## Contributing
-
-To extend this project:
-1. Modify `python_codes/Abstract_model.py` for model changes
-2. Update data sources in the Data/ folder
-3. Test with representative periods first (e.g., 1 week = 168 hours)
-4. Create new notebooks for additional scenarios
-
----
-
-## License & Attribution
-
-Assignment project for DTU (Technical University of Denmark) - Integrated Energy Grids course.
-
-Last updated: April 2026
-
----
-
-## Contact & Support
-
-For issues, questions, or contributions:
-- Check the troubleshooting section above
-- Review notebook markdown cells for detailed explanations
-- Refer to PyPSA documentation for model-specific questions
+All generated figures are saved to `Plots/`, including:
+- Optimal capacity mixes (stacked bar charts by country)
+- Seasonal dispatch time series (winter and summer weeks)
+- Interconnection flow maps
+- Storage state-of-charge profiles
+- CO2 cost curves (abatement cost vs. emission cap)
+- Sector-coupling heat and hydrogen dispatch analyses
