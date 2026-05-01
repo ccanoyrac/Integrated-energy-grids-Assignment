@@ -41,7 +41,7 @@ try:
 except ImportError as exc:
     raise ImportError("pypsa is required. Install with: pip install pypsa") from exc
 
-from python_codes.integrated_electricity_hydrogen import (
+from python_codes._ import (
     IntegratedElectricityH2Result,
     optimize_multi_country_integrated_electricity_h2,
 )
