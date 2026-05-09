@@ -90,6 +90,36 @@ except ImportError:
 DEFAULT_RENEWABLE_TECHS = ("Wind", "Solar", "Hydro")
 
 
+def _add_daily_battery_soc_constraints(n, snapshots):
+    """Extra functionality: enforce battery SOC at end of each 24-hour window equals
+    the SOC at the end of the previous window (daily cyclic constraint).
+
+    This allows the optimizer to freely choose the daily SOC balance level while
+    preventing multi-day drift in the battery state of charge.
+    """
+    if "battery" not in n.storage_units.index:
+        return
+    if "StorageUnit-state_of_charge" not in n.model.variables:
+        return
+
+    soc = n.model["StorageUnit-state_of_charge"]
+    snaps = list(snapshots)
+    n_days = len(snaps) // 24
+
+    if n_days < 2:
+        return
+
+    # Last snapshot of each complete day (indices 23, 47, 71, …)
+    end_of_day = [snaps[24 * d - 1] for d in range(1, n_days + 1)]
+
+    for i in range(1, len(end_of_day)):
+        lhs = (
+            soc.sel(name="battery", snapshot=end_of_day[i])
+            - soc.sel(name="battery", snapshot=end_of_day[i - 1])
+        )
+        n.model.add_constraints(lhs == 0, name=f"battery_daily_cyclic_{i}")
+
+
 @dataclass(frozen=True)
 class TechParams:
     """Parameters for a single generation technology.
@@ -230,7 +260,7 @@ def optimize_capacity_expansion(
             max_hours=battery_cfg.get("max_hours", 4.0),
             efficiency_store=battery_cfg.get("charging_efficiency", 0.9),
             efficiency_dispatch=battery_cfg.get("discharging_efficiency", 0.9),
-            cyclic_soc=battery_cfg.get("cyclic_soc", True),
+            cyclic_soc=False,  # daily cyclic enforced via extra_functionality
             standing_loss=battery_cfg.get("standing_loss", 0.0),
             marginal_cost=battery_cfg.get("variable_cost", 0.0),
             capital_cost=battery_cfg.get("fixed_cost", 100.0),
@@ -241,9 +271,10 @@ def optimize_capacity_expansion(
     try:
         print(f"Optimizing with {solver_name}...")
         network.optimize(
-            solver_name=solver_name, 
+            solver_name=solver_name,
             multi_investment_periods=multi_investment_periods,
-            log_to_console=True if solver_name == "gurobi" else False
+            extra_functionality=_add_daily_battery_soc_constraints,
+            log_to_console=True if solver_name == "gurobi" else False,
         )
         print(f"✓ Optimization complete\n")
         optimize_successful = True
@@ -267,8 +298,9 @@ def optimize_capacity_expansion(
         print(f"  Error: {str(e)[:200]}")
         try:
             network.optimize(
-                solver_name=solver_name, 
+                solver_name=solver_name,
                 multi_investment_periods=multi_investment_periods,
+                extra_functionality=_add_daily_battery_soc_constraints,
                 solver_options={'glpk': {'wopt': 'all'}} if solver_name == 'glpk' else {},
             )
             print(f"✓ Optimization complete (with retry)\n")
@@ -579,54 +611,16 @@ def optimize_capacity_expansion_with_storage(
         cyclic_state_of_charge=False,  # Allow multi-day storage patterns
     )
 
-    # === ADD DAILY SOC CONSTRAINT: SOC at start and end of each day = 25% of energy capacity ===
-    # This constraint ensures storage operates in a day-ahead planning mode
-    # We set the initial SOC to 25% of e_nom_max and use cyclic constraints on a daily basis
-    
-    n_hours = len(network.snapshots)
-    
-    # Set initial state of charge to 25% of energy capacity (reasonable starting point)
-    # This will be maintained at the end of each day via daily cyclic constraints
-    for storage_name in ["battery", "hydrogen"]:
-        if storage_name not in network.storage_units.index:
-            continue
-        
-        print(f"  Setting {storage_name} initial SOC = 25% with daily resets")
-        
-        # Get the maximum energy capacity for this storage unit
-        e_nom_max = network.storage_units.at[storage_name, "e_nom_max"]
-        
-        # Set initial SOC to 0% * e_nom_max (in MWh absolute value)
-        # PyPSA stores state_of_charge_initial as absolute MWh values
-        soc_target = 0 * e_nom_max
-        network.storage_units.at[storage_name, "state_of_charge_initial"] = soc_target
-        
-        print(f"    → e_nom_max: {e_nom_max:,.0f} MWh, SOC_initial target: {soc_target:,.0f} MWh (25%)")
-        
-        # Set cyclic state of charge for DAILY resets (not yearly)
-        # We'll add constraints for each day boundary
-        if storage_name not in network.storage_units_t.state_of_charge_set:
-            network.storage_units_t.state_of_charge_set[storage_name] = pd.Series(
-                index=network.snapshots, 
-                data=np.nan
-            )
-        
-        # For each day boundary, enforce SOC = 25% of e_nom_max at start/end
-        n_days = int(np.ceil(n_hours / 24))
-        for day in range(1, n_days):  # Start from day 1, since day 0 is handled by state_of_charge_initial
-            hour_index = day * 24
-            if hour_index < len(network.snapshots):
-                # Set SOC constraint to 25% of e_nom_max (absolute MWh value)
-                network.storage_units_t.state_of_charge_set[storage_name].iloc[hour_index] = soc_target
-
     # Optimize with error handling
+    # Daily cyclic SOC constraint for battery is injected via _add_daily_battery_soc_constraints
     optimize_successful = False
     try:
         print(f"\nOptimizing capacity expansion with battery storage using {solver_name}...")
         network.optimize(
-            solver_name=solver_name, 
+            solver_name=solver_name,
             multi_investment_periods=multi_investment_periods,
-            log_to_console=True if solver_name == "gurobi" else False
+            extra_functionality=_add_daily_battery_soc_constraints,
+            log_to_console=True if solver_name == "gurobi" else False,
         )
         print(f"✓ Optimization complete\n")
         optimize_successful = True
@@ -645,8 +639,9 @@ def optimize_capacity_expansion_with_storage(
         print(f"  Error: {str(e)[:200]}")
         try:
             network.optimize(
-                solver_name=solver_name, 
+                solver_name=solver_name,
                 multi_investment_periods=multi_investment_periods,
+                extra_functionality=_add_daily_battery_soc_constraints,
             )
             print(f"✓ Optimization complete (with retry)\n")
             optimize_successful = True
@@ -977,14 +972,14 @@ def optimize_capacity_expansion_with_co2_cap(
                 capital_cost=hydrogen_fixed_cost,
                 cyclic_state_of_charge=False)
 
-    for storage_name in ["battery", "hydrogen"]:
-        e_nom_max = network.storage_units.at[storage_name, "e_nom_max"]
-        network.storage_units.at[storage_name, "state_of_charge_initial"] = 0
-        network.storage_units_t.state_of_charge_set[storage_name] = pd.Series(index=network.snapshots, data=np.nan)
-
     # Baseline optimization
     try:
-        network.optimize(solver_name=solver_name, multi_investment_periods=multi_investment_periods, log_to_console=False)
+        network.optimize(
+            solver_name=solver_name,
+            multi_investment_periods=multi_investment_periods,
+            extra_functionality=_add_daily_battery_soc_constraints,
+            log_to_console=False,
+        )
     except (AttributeError, ValueError) as e:
         # Handle PyPSA post-processing errors (shadow prices or load shape mismatch)
         if isinstance(e, AttributeError) and "shadow-prices" not in str(e) and "was not assigned" not in str(e):
@@ -1038,7 +1033,12 @@ def optimize_capacity_expansion_with_co2_cap(
             print(f"\n  Re-optimizing with adjusted costs...")
             
             try:
-                network.optimize(solver_name=solver_name, multi_investment_periods=multi_investment_periods, log_to_console=True if solver_name == "gurobi" else False)
+                network.optimize(
+                    solver_name=solver_name,
+                    multi_investment_periods=multi_investment_periods,
+                    extra_functionality=_add_daily_battery_soc_constraints,
+                    log_to_console=True if solver_name == "gurobi" else False,
+                )
                 print(f"✓ Optimization with CO2 penalty complete\n")
             except (AttributeError, ValueError) as e:
                 # Handle PyPSA post-processing errors (shadow prices or load shape mismatch)
